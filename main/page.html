@@ -1,30 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Document</title>
-  <script defer src="face-api.min.js"></script>
-  <script defer src="script.js"></script>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      width: 100vw;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    canvas {
-      position: absolute;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>immi - Experience the Interface</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
-  <a href="index.html">⬅ Go back to Main Page</a>
-  <video id="video" width="720" height="560" autoplay muted></video>
+<body class="app-page">
+
+    <header class="site-header">
+        <div class="container nav-container">
+            <a href="index.html" class="logo">immi</a>
+            <nav class="main-nav">
+                <a href="index.html#features">Features</a>
+                <a href="index.html#use-cases">Use Cases</a>
+                <a href="index.html#how-it-works">How it works</a>
+                <a href="index.html#impact">Impact</a>
+                <a href="index.html#faq">FAQ</a>
+            </nav>
+            <div class="nav-cta">
+                <a href="index.html" class="btn btn-secondary btn-sm">Back to Home</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="app-main">
+        <section class="section interface-header">
+            <div class="container">
+                <span class="pill badge-blue">Interactive Interface</span>
+                <h1>Explore the immi System</h1>
+                <p>Interact with the simulation below to see how immi processes language and navigation tasks in real-time.</p>
+            </div>
+        </section>
+
+        <section class="interface-sandbox">
+            <div class="container">
+                <div class="sandbox-container">
+                    
+                    <div id="immi-app-root">
+                        
+                        <div class="app-interface-wrapper">
+                             <div class="app-sidebar">
+                                 <div class="app-nav-item active">Dashboard</div>
+                                 <div class="app-nav-item">Smart Lens</div>
+                                 <div class="app-nav-item">Roleplay</div>
+                             </div>
+                             <div class="app-content-area">
+                                 <div class="app-card-ui">
+                                     <h2>Welcome back</h2>
+                                     <p>Ready to navigate a new situation today?</p>
+                                     <button class="btn btn-primary">Start Scanning</button>
+                                 </div>
+                             </div>
+                        </div>
+                        </div>
+
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-top">
+                <div class="footer-brand">
+                    <span class="logo">immi</span>
+                    <p>A life-aid for newcomers.</p>
+                </div>
+                <div class="footer-links">
+                    <a href="#">Privacy</a>
+                    <a href="#">Terms</a>
+                    <a href="#">Contact</a>
+                </div>
+            </div>
+            <hr>
+            <div class="footer-bottom">
+                <p>&copy; 2026 immi platform. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
 </body>
 </html>
