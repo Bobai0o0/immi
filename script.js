@@ -29,11 +29,21 @@ async function loadModels() {
 // Start scanning
 // =======================
 async function startScanning() {
-  // UI swap
   welcomeCard.style.display = 'none';
-  videoContainer.style.display = 'flex';
+  videoContainer.style.display = 'block';
   startButton.style.display = 'none';
-  stopButton.style.display = 'block';
+  stopButton.style.display = 'inline-flex';
+
+  // 🔊 Show ElevenLabs agent
+  document.getElementById('voice-agent').style.display = 'block';
+
+  stream = await navigator.mediaDevices.getUserMedia({
+    video: { facingMode: 'user' },
+    audio: true // IMPORTANT: mic permission
+  });
+
+  video.srcObject = stream;
+
 
   fixVideoLayout();
 
@@ -49,74 +59,68 @@ async function startScanning() {
   }
 }
 
-// =======================
-// Video play event
-// =======================
-video.addEventListener(
-  'play',
-  () => {
-    // Initial resize
-    resizeVideo();
 
-    // Start detection loop
-    detectionInterval = setInterval(async () => {
-      const detections = await faceapi
-        .detectAllFaces(video, new faceapi.TinyFaceDetectorOptions())
-        .withFaceLandmarks()
-        .withFaceExpressions();
+  // When video starts playing
+  video.addEventListener(
+    'play',
+    () => {
+      // Get displayed video size (NOT camera resolution)
+      const rect = video.getBoundingClientRect();
 
-      const resizedDetections = faceapi.resizeResults(detections, displaySize);
+      displaySize = {
+        width: rect.width,
+        height: rect.height
+      };
 
-      const ctx = overlay.getContext('2d');
-      ctx.clearRect(0, 0, overlay.width, overlay.height);
+      // Match canvas size to displayed video
+      overlay.width = displaySize.width;
+      overlay.height = displaySize.height;
+      overlay.style.width = `${displaySize.width}px`;
+      overlay.style.height = `${displaySize.height}px`;
 
-      faceapi.draw.drawDetections(overlay, resizedDetections);
-      faceapi.draw.drawFaceLandmarks(overlay, resizedDetections);
-      faceapi.draw.drawFaceExpressions(overlay, resizedDetections);
-    }, 100);
-  },
-  { once: true }
-);
+      faceapi.matchDimensions(overlay, displaySize);
 
-// =======================
-// Resize video + overlay dynamically
-// =======================
-function resizeVideo() {
-  if (!video || video.paused) return;
+      // Start detection loop
+      detectionInterval = setInterval(async () => {
+        const detections = await faceapi
+          .detectAllFaces(
+            video,
+            new faceapi.TinyFaceDetectorOptions()
+          )
+          .withFaceLandmarks()
+          .withFaceExpressions();
 
-  const maxHeight = window.innerHeight * 0.7; // 70% of viewport
-  video.style.height = 'auto';
-  video.style.width = '105%'; // slightly wider
-  video.style.maxWidth = '1050px';
-  
-  // Get displayed video size
-  const rect = video.getBoundingClientRect();
-  displaySize = { width: rect.width, height: rect.height };
+        const resizedDetections = faceapi.resizeResults(
+          detections,
+          displaySize
+        );
 
-  // Update canvas size to match video
-  overlay.width = rect.width;
-  overlay.height = rect.height;
-  overlay.style.width = `${rect.width}px`;
-  overlay.style.height = `${rect.height}px`;
+        const ctx = overlay.getContext('2d');
+        ctx.clearRect(0, 0, overlay.width, overlay.height);
 
-  faceapi.matchDimensions(overlay, displaySize);
-}
+        faceapi.draw.drawDetections(overlay, resizedDetections);
+        faceapi.draw.drawFaceLandmarks(overlay, resizedDetections);
+        faceapi.draw.drawFaceExpressions(overlay, resizedDetections);
+      }, 100);
+    },
+    { once: true }
+  );
 
 
-// =======================
-// Fix layout issues
-// =======================
 function fixVideoLayout() {
+  // Expand the video container
   videoContainer.style.position = 'relative';
   videoContainer.style.overflow = 'visible';
-  videoContainer.style.flexDirection = 'column';
-  videoContainer.style.alignItems = 'center';
+  videoContainer.style.minHeight = '800px';
 
+  // Expand the card holding the video
   const card = videoContainer.closest('.app-card-ui');
   if (card) {
     card.style.overflow = 'visible';
+    card.style.minHeight = '900px';
   }
 
+  // Fix flex parent alignment issues
   const contentArea = videoContainer.closest('.app-content-area');
   if (contentArea) {
     contentArea.style.alignItems = 'flex-start';
@@ -127,25 +131,24 @@ function fixVideoLayout() {
 // Stop scanning
 // =======================
 function stopScanning() {
-  // UI reset
   videoContainer.style.display = 'none';
   welcomeCard.style.display = 'block';
   startButton.style.display = 'inline-flex';
   stopButton.style.display = 'none';
 
-  // Stop detection loop
+  // 🔇 Hide ElevenLabs agent
+  document.getElementById('voice-agent').style.display = 'none';
+
   if (detectionInterval) {
     clearInterval(detectionInterval);
     detectionInterval = null;
   }
 
-  // Stop webcam
   if (stream) {
     stream.getTracks().forEach(track => track.stop());
     stream = null;
   }
 
-  // Clear canvas
   const ctx = overlay.getContext('2d');
   ctx.clearRect(0, 0, overlay.width, overlay.height);
 }
@@ -155,9 +158,24 @@ function stopScanning() {
 // =======================
 startButton.addEventListener('click', startScanning);
 stopButton.addEventListener('click', stopScanning);
-window.addEventListener('resize', resizeVideo);
 
 // =======================
 // Init
 // =======================
 loadModels();
+
+// =======================
+// Autoplay app video with sound
+// =======================
+document.addEventListener('DOMContentLoaded', () => {
+  const video = document.getElementById('app-video');
+  if (!video) return;
+
+  // Try to play video with sound
+  video.muted = false; // unmute
+  video.play().catch(err => {
+    console.warn('Autoplay with sound blocked, muting video:', err);
+    video.muted = true; // fallback to muted autoplay
+    video.play();
+  });
+});

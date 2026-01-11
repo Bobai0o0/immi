@@ -16,12 +16,21 @@
         <div class="container nav-container">
             <a href="index.html" class="logo">immi</a>
             <nav class="main-nav">
-                <a href="index.html#features">Features</a>
-                <a href="index.html#use-cases">Use Cases</a>
-                <a href="index.html#how-it-works">How it works</a>
-                <a href="index.html#impact">Impact</a>
-                <a href="index.html#faq">FAQ</a>
+                <a href="index.html#features" data-i18n="nav.features">Features</a>
+                <a href="index.html#use-cases" data-i18n="nav.useCases">Use Cases</a>
+                <a href="index.html#how-it-works" data-i18n="nav.howItWorks">How it works</a>
+                <a href="index.html#impact" data-i18n="nav.impact">Impact</a>
+                <a href="index.html#faq" data-i18n="nav.faq">FAQ</a>
             </nav>
+            <div class="lang-wrap" aria-label="Language selector">
+                <button class="lang-icon" aria-hidden="true">🌐</button>
+                <select id="lang-select" aria-label="Select language">
+                    <option value="en">English</option>
+                    <option value="zh">中文</option>
+                    <option value="fr">Français</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+            </div>
             <div class="nav-cta">
                 <a href="index.html" class="btn btn-secondary btn-sm">Back to Home</a>
             </div>
@@ -32,8 +41,8 @@
         <section class="section interface-header">
             <div class="container">
                 <span class="pill badge-blue">Interactive Interface</span>
-                <h1>Explore the immi System</h1>
-                <p>Interact with the simulation below to see how immi processes language and navigation tasks in real-time.</p>
+                <h1 data-i18n="page.interface.title">Explore the immi System</h1>
+                <p data-i18n="page.start.scanning">Interact with the simulation below to see how immi processes language and navigation tasks in real-time.</p>
             </div>
         </section>
 
@@ -45,18 +54,26 @@
 
                         <div class="app-interface-wrapper">
                             <div class="app-sidebar">
-                                <div class="app-nav-item active">Dashboard</div>
-                                <div class="app-nav-item">Smart Lens</div>
+                                <div class="app-nav-item" style="color:black;">Dashboard</div>
+                                <div class="app-nav-item active">Smart Lens</div>
+                                <a href="page2.html" class="app-nav-link">
                                 <div class="app-nav-item">Roleplay</div>
+                                </a>
                             </div>
                             <div class="app-content-area">
 
                                 <!-- Welcome card -->
                                 <div class="app-card-ui" id="welcome-card">
-                                    <h2>Welcome back</h2>
+                                    <h2 data-i18n="page.interface.title">Welcome back</h2>
                                     <p>Ready to navigate a new situation today?</p>
-                                    <button class="btn btn-primary" id="start-btn">Start Scanning</button>
+                                    <button class="btn btn-primary" id="start-btn" data-i18n="page.start.scanning">Start Scanning</button>
                                 </div>
+
+                                <div id="voice-agent" style="display:none;">
+                                    <elevenlabs-convai agent-id="agent_1401kep9fzsrfjetmfkg7ahpy7zx"></elevenlabs-convai>
+                                </div>
+
+                                <script src="https://unpkg.com/@elevenlabs/convai-widget-embed@beta" async></script>
 
                                 <!-- Video container -->
                                 <div id="video-container" style="
@@ -83,6 +100,8 @@
                                 </div>
 
                             </div>
+
+
                         </div>
 
                     </div>
@@ -111,6 +130,9 @@
             </div>
         </div>
     </footer>
+
+<script src="i18n.js"></script>
+<script src="lang.js"></script>
 
 </body>
 </html>
