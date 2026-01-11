@@ -165,3 +165,19 @@ stopButton.addEventListener('click', stopScanning);
 // Init
 // =======================
 loadModels();
+
+// =======================
+// Autoplay app video with sound
+// =======================
+document.addEventListener('DOMContentLoaded', () => {
+  const video = document.getElementById('app-video');
+  if (!video) return;
+
+  // Try to play video with sound
+  video.muted = false; // unmute
+  video.play().catch(err => {
+    console.warn('Autoplay with sound blocked, muting video:', err);
+    video.muted = true; // fallback to muted autoplay
+    video.play();
+  });
+});
