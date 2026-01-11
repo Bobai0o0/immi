@@ -20,9 +20,8 @@ async function loadModels() {
     await faceapi.nets.tinyFaceDetector.loadFromUri('/models');
     await faceapi.nets.faceLandmark68Net.loadFromUri('/models');
     await faceapi.nets.faceExpressionNet.loadFromUri('/models');
-    console.log('✅ Face-api models loaded');
   } catch (err) {
-    console.error('❌ Error loading models:', err);
+    console.error(err);
   }
 }
 
@@ -36,7 +35,6 @@ async function startScanning() {
   startButton.style.display = 'none';
   stopButton.style.display = 'block';
 
-  // 🔑 FIX LAYOUT BEFORE VIDEO STARTS
   fixVideoLayout();
 
   // Start webcam
@@ -46,7 +44,7 @@ async function startScanning() {
     });
     video.srcObject = stream;
   } catch (err) {
-    console.error('❌ Webcam error:', err);
+    console.error(err);
     return;
   }
 }
