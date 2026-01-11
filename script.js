@@ -165,5 +165,3 @@ stopButton.addEventListener('click', stopScanning);
 // Init
 // =======================
 loadModels();
-
-
