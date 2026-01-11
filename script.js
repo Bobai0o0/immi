@@ -32,9 +32,9 @@ async function loadModels() {
 async function startScanning() {
   // UI swap
   welcomeCard.style.display = 'none';
-  videoContainer.style.display = 'block';
+  videoContainer.style.display = 'flex';
   startButton.style.display = 'none';
-  stopButton.style.display = 'inline-flex';
+  stopButton.style.display = 'block';
 
   // 🔑 FIX LAYOUT BEFORE VIDEO STARTS
   fixVideoLayout();
@@ -51,68 +51,74 @@ async function startScanning() {
   }
 }
 
+// =======================
+// Video play event
+// =======================
+video.addEventListener(
+  'play',
+  () => {
+    // Initial resize
+    resizeVideo();
 
-  // When video starts playing
-  video.addEventListener(
-    'play',
-    () => {
-      // Get displayed video size (NOT camera resolution)
-      const rect = video.getBoundingClientRect();
+    // Start detection loop
+    detectionInterval = setInterval(async () => {
+      const detections = await faceapi
+        .detectAllFaces(video, new faceapi.TinyFaceDetectorOptions())
+        .withFaceLandmarks()
+        .withFaceExpressions();
 
-      displaySize = {
-        width: rect.width,
-        height: rect.height
-      };
+      const resizedDetections = faceapi.resizeResults(detections, displaySize);
 
-      // Match canvas size to displayed video
-      overlay.width = displaySize.width;
-      overlay.height = displaySize.height;
-      overlay.style.width = `${displaySize.width}px`;
-      overlay.style.height = `${displaySize.height}px`;
+      const ctx = overlay.getContext('2d');
+      ctx.clearRect(0, 0, overlay.width, overlay.height);
 
-      faceapi.matchDimensions(overlay, displaySize);
+      faceapi.draw.drawDetections(overlay, resizedDetections);
+      faceapi.draw.drawFaceLandmarks(overlay, resizedDetections);
+      faceapi.draw.drawFaceExpressions(overlay, resizedDetections);
+    }, 100);
+  },
+  { once: true }
+);
 
-      // Start detection loop
-      detectionInterval = setInterval(async () => {
-        const detections = await faceapi
-          .detectAllFaces(
-            video,
-            new faceapi.TinyFaceDetectorOptions()
-          )
-          .withFaceLandmarks()
-          .withFaceExpressions();
+// =======================
+// Resize video + overlay dynamically
+// =======================
+function resizeVideo() {
+  if (!video || video.paused) return;
 
-        const resizedDetections = faceapi.resizeResults(
-          detections,
-          displaySize
-        );
+  const maxHeight = window.innerHeight * 0.7; // 70% of viewport
+  video.style.height = 'auto';
+  video.style.width = '105%'; // slightly wider
+  video.style.maxWidth = '1050px';
+  
+  // Get displayed video size
+  const rect = video.getBoundingClientRect();
+  displaySize = { width: rect.width, height: rect.height };
 
-        const ctx = overlay.getContext('2d');
-        ctx.clearRect(0, 0, overlay.width, overlay.height);
+  // Update canvas size to match video
+  overlay.width = rect.width;
+  overlay.height = rect.height;
+  overlay.style.width = `${rect.width}px`;
+  overlay.style.height = `${rect.height}px`;
 
-        faceapi.draw.drawDetections(overlay, resizedDetections);
-        faceapi.draw.drawFaceLandmarks(overlay, resizedDetections);
-        faceapi.draw.drawFaceExpressions(overlay, resizedDetections);
-      }, 100);
-    },
-    { once: true }
-  );
+  faceapi.matchDimensions(overlay, displaySize);
+}
 
 
+// =======================
+// Fix layout issues
+// =======================
 function fixVideoLayout() {
-  // Expand the video container
   videoContainer.style.position = 'relative';
   videoContainer.style.overflow = 'visible';
-  videoContainer.style.minHeight = '800px';
+  videoContainer.style.flexDirection = 'column';
+  videoContainer.style.alignItems = 'center';
 
-  // Expand the card holding the video
   const card = videoContainer.closest('.app-card-ui');
   if (card) {
     card.style.overflow = 'visible';
-    card.style.minHeight = '900px';
   }
 
-  // Fix flex parent alignment issues
   const contentArea = videoContainer.closest('.app-content-area');
   if (contentArea) {
     contentArea.style.alignItems = 'flex-start';
@@ -151,24 +157,9 @@ function stopScanning() {
 // =======================
 startButton.addEventListener('click', startScanning);
 stopButton.addEventListener('click', stopScanning);
+window.addEventListener('resize', resizeVideo);
 
 // =======================
 // Init
 // =======================
 loadModels();
-
-window.addEventListener('resize', () => {
-  if (!video || video.paused) return;
-
-  const rect = video.getBoundingClientRect();
-  overlay.width = rect.width;
-  overlay.height = rect.height;
-
-  overlay.style.width = `${rect.width}px`;
-  overlay.style.height = `${rect.height}px`;
-
-  faceapi.matchDimensions(overlay, {
-    width: rect.width,
-    height: rect.height
-  });
-});
