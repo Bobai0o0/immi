@@ -3,7 +3,7 @@
    Match Superlist vibe: Minimal, Rounded, Clean, Airy
 ----------------------------------------------------------- */
 :root {
-    --primary: #6366f1; 
+    --primary: #6c40fe; 
     --primary-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
     --secondary-gradient: linear-gradient(135deg, #3b82f6 0%, #2dd4bf 100%);
     --text-main: #1e293b;
@@ -15,8 +15,8 @@
     --text-muted: #64748B;
     --text-light: #94A3B8;
 
-    --primary: #2563EB; /* Trustworthy Blue */
-    --primary-hover: #1D4ED8;
+    --primary: #762cdf; /* Trustworthy Blue */
+    --primary-hover: #6123f3;
     --secondary: #E2E8F0;
     --secondary-hover: #CBD5E1;
 
@@ -132,13 +132,58 @@ ul {
     white-space: nowrap;
 }
 
-.btn-primary {
-    background-color: var(--text-main); /* Superlist uses black/dark for primary */
-    color: white;
+/* Primary button: ombre blue → purple with subtle 3D and ripple wave on hover */
+.btn {
+    position: relative;
+    overflow: hidden;
 }
+
+.btn-primary {
+    background: linear-gradient(90deg, #2563EB 0%, #7C3AED 50%, #A855F7 100%);
+    background-size: 200% 100%;
+    color: white;
+    border: none;
+    box-shadow: 0 6px 18px rgba(37,99,235,0.18), inset 0 -2px 0 rgba(0,0,0,0.05);
+    transition: transform 0.22s cubic-bezier(.2,.9,.2,1), box-shadow 0.2s ease, background-position 0.6s ease;
+}
+
+.btn-primary::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) scale(0.05);
+    width: 300%;
+    height: 300%;
+    background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.06) 25%, rgba(255,255,255,0) 40%);
+    opacity: 0;
+    transition: transform 0.6s cubic-bezier(.2,.9,.2,1), opacity 0.35s ease;
+    pointer-events: none;
+    border-radius: 50%;
+}
+
 .btn-primary:hover {
-    background-color: #333;
-    transform: translateY(-1px);
+    transform: translateY(-4px);
+    box-shadow: 0 14px 30px rgba(37,99,235,0.18), inset 0 -2px 0 rgba(0,0,0,0.06);
+    background-position: 100% 0;
+}
+
+.btn-primary:hover::after {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+}
+
+/* Secondary buttons: softer ombre */
+.btn-secondary {
+    background: linear-gradient(90deg, #EAF2FF 0%, #D9E6FF 50%, #EEF2FF 100%);
+    color: var(--text-main);
+    border: 1px solid rgba(15,23,42,0.06);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-position 0.6s ease;
+}
+
+.btn-secondary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(15,23,42,0.06);
 }
 
 .btn-secondary {
