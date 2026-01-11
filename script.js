@@ -34,7 +34,7 @@ async function startScanning() {
   startButton.style.display = 'none';
   stopButton.style.display = 'inline-flex';
 
-  // 🔊 Show ElevenLabs agent
+  //  Show ElevenLabs agent
   document.getElementById('voice-agent').style.display = 'block';
 
   stream = await navigator.mediaDevices.getUserMedia({
@@ -136,7 +136,7 @@ function stopScanning() {
   startButton.style.display = 'inline-flex';
   stopButton.style.display = 'none';
 
-  // 🔇 Hide ElevenLabs agent
+  // Hide ElevenLabs agent
   document.getElementById('voice-agent').style.display = 'none';
 
   if (detectionInterval) {
